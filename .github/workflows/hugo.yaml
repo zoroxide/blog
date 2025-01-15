@@ -1,52 +1,43 @@
-name: Deploy Hugo to GitHub Pages
+name: Deploy Hugo site to GitHub Pages
 
 on:
   push:
     branches:
-      - main  # Replace 'main' with your default branch name if different
-
-permissions:
-  contents: write
-  pages: write
-  id-token: write
+      - main  # Trigger deployment when pushing to the 'main' branch
+  pull_request:
+    branches:
+      - main  # Also trigger when making a PR to 'main'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository
+      # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Hugo
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+      # Step 2: Set up Go (needed for Hugo)
+      - name: Set up Go
+        uses: actions/setup-go@v3
         with:
-          hugo-version: 'latest'
+          go-version: '1.20'  # Hugo requires Go to build
 
-      # Step 3: Build the Hugo site
-      - name: Build site
-        run: hugo --minify
+      # Step 3: Install Hugo
+      - name: Install Hugo
+        run: |
+          wget https://github.com/gohugoio/hugo/releases/download/v0.114.4/hugo_extended_0.114.4_Linux-64bit.deb
+          sudo dpkg -i hugo_extended_0.114.4_Linux-64bit.deb
 
-      # Step 4: Upload the built site to GitHub Pages artifact storage
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: public
+      # Step 4: Build the site
+      - name: Build the Hugo site
+        run: |
+          hugo --minify
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      # Step 5: Configure GitHub Pages
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          enablement: true
-
-      # Step 6: Deploy to GitHub Pages
+      # Step 5: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public  # Hugo generates the site in the 'public' directory
+          publish_branch: gh-pages  # GitHub Pages uses the 'gh-pages' branch for deployment
