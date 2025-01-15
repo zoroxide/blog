@@ -26,8 +26,7 @@ jobs:
       # Step 3: Install Hugo
       - name: Install Hugo
         run: |
-          wget https://github.com/gohugoio/hugo/releases/download/v0.114.4/hugo_extended_0.114.4_Linux-64bit.deb
-          sudo dpkg -i hugo_extended_0.114.4_Linux-64bit.deb
+          sudo apt-get install go hugo 
 
       # Step 4: Build the site
       - name: Build the Hugo site
