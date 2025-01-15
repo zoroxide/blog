@@ -21,13 +21,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.20'  # Hugo requires Go to build
+          go-version: '1.20.x'  # Ensure Go version is in the correct format
 
       # Step 3: Install Hugo
       - name: Install Hugo
         run: |
           sudo apt-get update
-          sudo apt-get install hugo 
+          sudo apt-get install hugo
 
       # Step 4: Build the site
       - name: Build the Hugo site
