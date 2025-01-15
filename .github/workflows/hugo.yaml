@@ -26,7 +26,7 @@ jobs:
       # Step 3: Install Hugo
       - name: Install Hugo
         run: |
-          sudo apt-get install go hugo 
+          sudo apt-get install golang hugo 
 
       # Step 4: Build the site
       - name: Build the Hugo site
